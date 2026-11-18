@@ -33,7 +33,8 @@ public class User {
     private LocalDateTime tokenExpiresAt;
 
     /** USER or ADMIN. The default value lets Hibernate add the column to existing tables. */
-    @Column(nullable = false, length = 10, columnDefinition = "varchar(10) default 'USER' not null")
+    @org.hibernate.annotations.ColumnDefault("'USER'")
+    @Column(nullable = false, length = 10)
     private String role = "USER";
 
     @Column(name = "created_at", nullable = false)
