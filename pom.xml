@@ -53,6 +53,12 @@
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
+        <!-- PostgreSQL (e.g. Neon) for hosted deployments - picked automatically from a jdbc:postgresql:// DB_URL -->
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <scope>runtime</scope>
+        </dependency>
         <!-- In-memory DB for the optional "h2" profile (quick demo without MySQL) -->
         <dependency>
             <groupId>com.h2database</groupId>
