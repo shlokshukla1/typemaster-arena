@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>TypeMaster Arena - Typing Games, Racing &amp; Speed Tests</title>
+    <meta name="description" content="Improve your typing speed with 10 typing games: AI car racing, zombies, falling words, code typing and more. Track WPM and accuracy live.">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/svg+xml" href="/images/logo.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Great+Vibes&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="bg-orbs" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<header class="navbar">
+    <div class="nav-inner">
+        <a class="logo" href="#/home" aria-label="TypeMaster Arena home">
+            <img src="/images/logo.svg" alt="" width="34" height="34">
+            <span>Type<b>Master</b> <em>Arena</em></span>
+        </a>
+        <nav class="nav-links" aria-label="Main">
+            <a href="#/home" data-nav="home">Home</a>
+            <a href="#/practice" data-nav="practice">Typing Practice</a>
+            <a href="#/games" data-nav="games">All Games</a>
+            <a href="#/racing" data-nav="racing">Racing Challenge</a>
+            <a href="#/leaderboard" data-nav="leaderboard">Leaderboard</a>
+            <a href="#/progress" data-nav="progress">My Progress</a>
+        </nav>
+        <div class="nav-right">
+            <button class="icon-btn" id="soundBtn" type="button" aria-label="Toggle sound"></button>
+            <div id="navUser" class="nav-user"></div>
+            <button class="icon-btn nav-toggle" id="navToggle" type="button" aria-label="Menu">&#9776;</button>
+        </div>
+    </div>
+</header>
+
+<main id="app" class="page"></main>
+
+<footer class="footer">
+    <div>&copy; TypeMaster Arena &middot; Built with Spring Boot, MySQL &amp; vanilla JavaScript</div>
+    <div class="muted">Net WPM = Gross WPM &times; Accuracy / 100</div>
+</footer>
+
+<div id="toasts" class="toasts" aria-live="polite"></div>
+
+<!-- core -->
+<script src="/js/core/util.js"></script>
+<script src="/js/core/sound.js"></script>
+<script src="/js/core/api.js"></script>
+<script src="/js/core/stats.js"></script>
+<script src="/js/core/typer.js"></script>
+<script src="/js/core/keyboard.js"></script>
+<script src="/js/core/shell.js"></script>
+<script src="/js/core/certificate.js"></script>
+<!-- data -->
+<script src="/js/data/words.js"></script>
+<script src="/js/data/levels.js"></script>
+<!-- games -->
+<script src="/js/games/racing.js"></script>
+<script src="/js/games/text-games.js"></script>
+<script src="/js/games/word-games.js"></script>
+<!-- pages + router -->
+<script src="/js/pages/pages.js"></script>
+<script src="/js/pages/admin.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
