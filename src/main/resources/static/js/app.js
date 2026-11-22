@@ -29,8 +29,10 @@ window.TM = window.TM || {};
   }
 
   function render() {
-    teardown();
     const { page, id, params } = parseHash();
+    // Admin accounts stay inside the admin panel - every other page redirects back to #/admin.
+    if (TM.Api.isAdmin() && page !== 'admin') { location.replace('#/admin'); return; }
+    teardown();
     const root = view();
     root.innerHTML = '';
     root.className = 'page page-' + page;
@@ -74,14 +76,26 @@ window.TM = window.TM || {};
   function renderUser() {
     const box = document.getElementById('navUser');
     const u = TM.Api.user();
+    const isAdmin = TM.Api.isAdmin();
+    document.body.classList.toggle('admin-mode', isAdmin);
     box.innerHTML = u
-      ? `<span class="user-chip" title="${TM.esc(u.email)}">👤 ${TM.esc(u.username)}</span><button class="btn btn-ghost btn-sm" id="logoutBtn">Log out</button>`
+      ? `<span class="user-chip" title="${TM.esc(u.email)}">${isAdmin ? '🛡' : '👤'} ${TM.esc(u.username)}</span><button class="btn btn-ghost btn-sm" id="logoutBtn">Log out</button>`
       : '<button class="btn btn-primary btn-sm" id="loginBtn">Log in</button>';
     // No "Admin" link in the menu - the admin panel is opened directly at #/admin (admin accounts only).
     const lb = document.getElementById('loginBtn');
-    if (lb) lb.addEventListener('click', () => TM.Auth.open({}));
+    // On the admin page the login is for the admin only - no "Create account" option.
+    if (lb) lb.addEventListener('click', () => TM.Auth.open(parseHash().page === 'admin'
+      ? { reason: 'Log in with your admin account.', loginOnly: true }
+      : {}));
     const lo = document.getElementById('logoutBtn');
-    if (lo) lo.addEventListener('click', async () => { await TM.Api.logout(); TM.toast('Logged out. You can keep playing as a guest.'); render(); });
+    if (lo) lo.addEventListener('click', async () => {
+      const wasAdmin = TM.Api.isAdmin();
+      await TM.Api.logout();
+      TM.toast(wasAdmin ? 'Logged out of the admin panel.' : 'Logged out. You can keep playing as a guest.');
+      if (wasAdmin && location.hash !== '#/home') location.hash = '#/home'; else render();
+    });
+    // An admin who just logged in (from any page) is taken straight to the admin panel.
+    if (isAdmin && parseHash().page !== 'admin') location.replace('#/admin');
   }
 
   function renderSound() {

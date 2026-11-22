@@ -48,7 +48,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&family=Great+Vibes&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
 <body>
 <div class="bg-orbs" aria-hidden="true"><i></i><i></i><i></i></div>
@@ -102,24 +102,24 @@
 <div id="toasts" class="toasts" aria-live="polite"></div>
 
 <!-- core -->
-<script src="/js/core/util.js"></script>
-<script src="/js/core/sound.js"></script>
-<script src="/js/core/api.js"></script>
-<script src="/js/core/stats.js"></script>
-<script src="/js/core/typer.js"></script>
-<script src="/js/core/keyboard.js"></script>
-<script src="/js/core/shell.js"></script>
-<script src="/js/core/certificate.js"></script>
+<script th:src="@{/js/core/util.js}"></script>
+<script th:src="@{/js/core/sound.js}"></script>
+<script th:src="@{/js/core/api.js}"></script>
+<script th:src="@{/js/core/stats.js}"></script>
+<script th:src="@{/js/core/typer.js}"></script>
+<script th:src="@{/js/core/keyboard.js}"></script>
+<script th:src="@{/js/core/shell.js}"></script>
+<script th:src="@{/js/core/certificate.js}"></script>
 <!-- data -->
-<script src="/js/data/words.js"></script>
-<script src="/js/data/levels.js"></script>
+<script th:src="@{/js/data/words.js}"></script>
+<script th:src="@{/js/data/levels.js}"></script>
 <!-- games -->
-<script src="/js/games/racing.js"></script>
-<script src="/js/games/text-games.js"></script>
-<script src="/js/games/word-games.js"></script>
+<script th:src="@{/js/games/racing.js}"></script>
+<script th:src="@{/js/games/text-games.js}"></script>
+<script th:src="@{/js/games/word-games.js}"></script>
 <!-- pages + router -->
-<script src="/js/pages/pages.js"></script>
-<script src="/js/pages/admin.js"></script>
-<script src="/js/app.js"></script>
+<script th:src="@{/js/pages/pages.js}"></script>
+<script th:src="@{/js/pages/admin.js}"></script>
+<script th:src="@{/js/app.js}"></script>
 </body>
 </html>

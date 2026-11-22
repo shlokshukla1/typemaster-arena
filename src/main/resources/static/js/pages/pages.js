@@ -491,24 +491,25 @@ window.TM = window.TM || {};
         <div class="auth">
           <div class="auth-logo">⌨️ TypeMaster Arena</div>
           ${opts.reason ? `<p class="muted">${esc(opts.reason)}</p>` : ''}
-          <div class="chips auth-tabs"><button class="chip active" data-tab="login">Log in</button><button class="chip" data-tab="register">Create account</button></div>
+          ${opts.loginOnly ? '' : '<div class="chips auth-tabs"><button class="chip active" data-tab="login">Log in</button><button class="chip" data-tab="register">Create account</button></div>'}
           <form class="auth-form" data-form="login" novalidate>
             <label>Username or email<input name="login" required autocomplete="username"></label>
             <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
             <div class="form-error"></div>
             <button class="btn btn-primary btn-block" type="submit">Log in</button>
           </form>
-          <form class="auth-form" data-form="register" hidden novalidate>
+          ${opts.loginOnly ? '' : `<form class="auth-form" data-form="register" hidden novalidate>
             <label>Username<input name="username" required minlength="3" maxlength="30" pattern="[A-Za-z0-9_]+" autocomplete="username"></label>
             <label>Email<input name="email" type="email" required autocomplete="email"></label>
             <label>Password <small>(min. 6 characters)</small><input name="password" type="password" required minlength="6" autocomplete="new-password"></label>
             <div class="form-error"></div>
             <button class="btn btn-primary btn-block" type="submit">Create account</button>
           </form>
-          <p class="muted small">Your guest progress on this device is merged into your account automatically.</p>
+          <p class="muted small">Your guest progress on this device is merged into your account automatically.</p>`}
         </div>`, { className: 'modal-auth' });
       const el = m.el;
-      $('.auth-tabs', el).addEventListener('click', (e) => {
+      const tabs = $('.auth-tabs', el);
+      if (tabs) tabs.addEventListener('click', (e) => {
         const b = e.target.closest('.chip'); if (!b) return;
         $$('.auth-tabs .chip', el).forEach((c) => c.classList.toggle('active', c === b));
         $$('.auth-form', el).forEach((f) => { f.hidden = f.dataset.form !== b.dataset.tab; });

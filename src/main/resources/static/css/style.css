@@ -92,6 +92,10 @@ kbd {
 .icon-btn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border); background: var(--panel2); cursor: pointer; font-size: 1.05rem; display: grid; place-items: center; transition: .2s; }
 .icon-btn:hover { border-color: var(--cyan); box-shadow: var(--glow); }
 .nav-toggle { display: none; }
+/* Admin mode: an admin sees only the admin panel - hide the player menu and footer. */
+body.admin-mode .nav-links,
+body.admin-mode .nav-toggle,
+body.admin-mode .footer { display: none !important; }
 
 /* ------------------------------------------------------------ layout */
 .page { max-width: 1280px; margin: 0 auto; padding: 28px 20px 60px; min-height: calc(100vh - 140px); }

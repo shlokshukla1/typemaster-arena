@@ -3,7 +3,7 @@
 A full-stack typing game platform: **10 typing games**, a **200-level AI car racing challenge** (8 chapters) with level unlocking and a **downloadable certificate at level 50**, a live **typing statistics dashboard**, a **typing practice** section with an on-screen keyboard, and a **global leaderboard**.
 
 - **Backend:** Java 17+, Spring Boot 3.3, Spring Data JPA, Bean Validation, BCrypt, Maven
-- **Database:** MySQL 8 (plus an optional in-memory H2 profile for quick demos)
+- **Database:** MySQL 8 (plus an optional file-based H2 profile for local use)
 - **Frontend:** HTML5, CSS3, vanilla JavaScript (no build step), Canvas, Web Audio API
 - **Design:** responsive dark gaming UI (desktop, tablet, mobile)
 
@@ -39,11 +39,11 @@ The database `typemaster_arena` and all tables are created automatically (`creat
 mysql -u root -p < database/schema.sql
 ```
 
-### Option B – quick demo without MySQL (in-memory H2)
+### Option B – run locally without MySQL (H2 file database, data kept in ./data)
 ```bash
 mvn spring-boot:run -Dspring-boot.run.profiles=h2
 ```
-Everything works, but data is lost when the server stops.
+Everything works, and users, scores and progress stay saved in `./data/typemaster.mv.db` between restarts.
 
 ### Build a runnable jar
 ```bash
@@ -200,7 +200,7 @@ typemaster-arena/
     │                     UnauthorizedException, GlobalExceptionHandler
     └── resources/
         ├── application.properties         MySQL (default)
-        ├── application-h2.properties      in-memory demo profile
+        ├── application-h2.properties      local H2 file-database profile
         ├── templates/index.html           single-page app shell
         └── static/
             ├── css/style.css
@@ -231,10 +231,10 @@ An admin account is created automatically at first startup:
 | Setting | Default | Env var |
 |---|---|---|
 | `app.admin.username` | `admin` | `ADMIN_USERNAME` |
-| `app.admin.password` | `Admin@123` | `ADMIN_PASSWORD` |
+| `app.admin.password` | `Shlok@Type#2026` | `ADMIN_PASSWORD` |
 | `app.admin.email` | `admin@typemaster.local` | `ADMIN_EMAIL` |
 
-**Change the password before putting the site online** (set `ADMIN_PASSWORD`, or edit `application.properties` before the first start). If a user with the admin username already exists, it is promoted to ADMIN and keeps its password.
+**Change the password before putting the site online** (set `ADMIN_PASSWORD`, or edit `application.properties` before the first start). If a user with the admin username already exists, it is promoted to ADMIN and its password is set to the configured one on every start. Other users are never changed.
 
 Log in with the admin account and click **🛡 Admin** in the menu (or open `http://localhost:8080/#/admin`). The panel shows:
 

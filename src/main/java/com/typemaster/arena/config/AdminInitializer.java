@@ -13,7 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * Creates the admin account at startup if it does not exist yet
  * (app.admin.username / app.admin.password / app.admin.email, or env ADMIN_USERNAME / ADMIN_PASSWORD / ADMIN_EMAIL).
- * An existing user with that username is promoted to ADMIN; its password is not changed.
+ * An existing user with that username is promoted to ADMIN and its password is set to the configured one.
+ * No other user is changed.
  */
 @Component
 public class AdminInitializer implements CommandLineRunner {
@@ -49,10 +50,21 @@ public class AdminInitializer implements CommandLineRunner {
             admin.setRole("ADMIN");
             userRepository.save(admin);
             log.info("Admin account '{}' created - log in with it and open #/admin", username);
-        } else if (!admin.isAdmin()) {
-            admin.setRole("ADMIN");
-            userRepository.save(admin);
-            log.info("User '{}' promoted to ADMIN", username);
+        } else {
+            boolean changed = false;
+            if (!admin.isAdmin()) {
+                admin.setRole("ADMIN");
+                changed = true;
+                log.info("User '{}' promoted to ADMIN", username);
+            }
+            // Keep exactly one admin password: the configured one.
+            if (!passwordEncoder.matches(password, admin.getPasswordHash())) {
+                admin.setPasswordHash(passwordEncoder.encode(password));
+                admin.setAuthToken(null);
+                changed = true;
+                log.info("Admin '{}' password updated to the configured value", username);
+            }
+            if (changed) userRepository.save(admin);
         }
     }
 }

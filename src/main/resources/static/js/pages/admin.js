@@ -30,7 +30,7 @@ window.TM = window.TM || {};
       root.innerHTML = `<section class="page-head center"><h1>🛡 Admin Panel</h1>
         <p class="lead">This area is only for administrators. Please log in with an admin account.</p>
         <button class="btn btn-primary" data-login>Log in as admin</button></section>`;
-      $('[data-login]', root).addEventListener('click', () => TM.Auth.open({ reason: 'Log in with your admin account.', onSuccess: () => TM.App.render() }));
+      $('[data-login]', root).addEventListener('click', () => TM.Auth.open({ reason: 'Log in with your admin account.', loginOnly: true, onSuccess: () => TM.App.render() }));
       return;
     }
 
