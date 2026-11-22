@@ -75,7 +75,90 @@ window.TM = window.TM || {};
     boost: () => tone(300, 0.3, 'sawtooth', 0.06, 900)
   };
 
+  /**
+   * Continuous car engine + exhaust (silencer) sound.
+   * set(level) with level 0..1 (0 = idle, 1 = full speed): pitch and volume rise with speed,
+   * the exhaust rumble gets louder and the silencer "pops" at high revs.
+   */
+  function createEngine() {
+    const a = audio(); if (!a) return null;
+    const out = a.createGain(); out.gain.value = 0; out.connect(a.destination);
+
+    // engine: two detuned sawtooth/square oscillators through a low-pass filter
+    const filter = a.createBiquadFilter(); filter.type = 'lowpass'; filter.frequency.value = 400; filter.Q.value = 4;
+    const engGain = a.createGain(); engGain.gain.value = 0.5;
+    const o1 = a.createOscillator(); o1.type = 'sawtooth';
+    const o2 = a.createOscillator(); o2.type = 'square';
+    // a slow wobble on the pitch makes it sound like firing cylinders
+    const lfo = a.createOscillator(); lfo.type = 'sine'; lfo.frequency.value = 18;
+    const lfoGain = a.createGain(); lfoGain.gain.value = 4;
+    lfo.connect(lfoGain); lfoGain.connect(o1.frequency); lfoGain.connect(o2.frequency);
+    o1.connect(filter); o2.connect(filter); filter.connect(engGain).connect(out);
+
+    // exhaust / silencer: looping noise through a low band-pass filter
+    const len = a.sampleRate * 2;
+    const buf = a.createBuffer(1, len, a.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+    const nz = a.createBufferSource(); nz.buffer = buf; nz.loop = true;
+    const exFilter = a.createBiquadFilter(); exFilter.type = 'bandpass'; exFilter.frequency.value = 120; exFilter.Q.value = 1.2;
+    const exGain = a.createGain(); exGain.gain.value = 0.3;
+    nz.connect(exFilter).connect(exGain).connect(out);
+
+    [o1, o2, lfo, nz].forEach((n) => n.start());
+    let level = 0, paused = false, stopped = false, lastPop = 0;
+
+    function apply() {
+      if (stopped) return;
+      const t = a.currentTime;
+      const on = !muted && !paused;
+      const base = 38 + level * 150;                        // engine pitch (Hz)
+      o1.frequency.setTargetAtTime(base, t, 0.12);
+      o2.frequency.setTargetAtTime(base * 0.5 + 1.5, t, 0.12);
+      lfo.frequency.setTargetAtTime(14 + level * 40, t, 0.12);
+      filter.frequency.setTargetAtTime(300 + level * 1600, t, 0.12);
+      exFilter.frequency.setTargetAtTime(90 + level * 260, t, 0.12);
+      exGain.gain.setTargetAtTime(0.25 + level * 0.55, t, 0.12);
+      out.gain.setTargetAtTime(on ? 0.05 + level * 0.17 : 0, t, 0.08);  // louder when faster
+    }
+
+    return {
+      set(v) {
+        level = Math.max(0, Math.min(1, v || 0));
+        apply();
+        // silencer backfire pops at high speed
+        const now = a.currentTime;
+        if (!muted && !paused && level > 0.55 && now - lastPop > 0.25 && Math.random() < level * 0.08) {
+          lastPop = now;
+          noise(0.07, 0.12 + level * 0.12, 450);
+        }
+      },
+      pause() { paused = true; apply(); },
+      resume() { paused = false; apply(); },
+      stop() {
+        if (stopped) return;
+        const t = a.currentTime;
+        out.gain.setTargetAtTime(0, t, 0.1);
+        stopped = true;
+        setTimeout(() => { [o1, o2, lfo, nz].forEach((n) => { try { n.stop(); } catch (e) { /* already stopped */ } }); out.disconnect(); }, 600);
+      },
+      refresh: apply
+    };
+  }
+
+  const engines = new Set();
+
   TM.Sound = {
+    /** Starts a car engine sound; returns { set(0..1), pause(), resume(), stop() } (no-op if audio is unavailable). */
+    engine() {
+      let e = null;
+      try { e = createEngine(); } catch (err) { e = null; }
+      if (!e) return { set() {}, pause() {}, resume() {}, stop() {} };
+      engines.add(e);
+      const stop = e.stop;
+      e.stop = () => { engines.delete(e); stop(); };
+      return e;
+    },
     play(name) {
       if (muted || !SFX[name]) return;
       try { SFX[name](); } catch (e) { /* audio not available */ }
@@ -84,6 +167,7 @@ window.TM = window.TM || {};
     setMuted(v) {
       muted = !!v;
       TM.Store.set('muted', muted);
+      engines.forEach((e) => e.refresh());
       listeners.forEach((fn) => fn(muted));
     },
     toggle() { TM.Sound.setMuted(!muted); if (!muted) TM.Sound.play('correct'); return muted; },

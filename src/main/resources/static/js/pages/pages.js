@@ -47,6 +47,7 @@ window.TM = window.TM || {};
           <div class="hero-actions">
             <a class="btn btn-primary btn-lg" href="#/racing">▶ Start Playing</a>
             <a class="btn btn-outline btn-lg" href="#/games">🎮 Explore Games</a>
+            <a class="btn btn-success btn-lg" href="#/friend">👥 Play with Friend</a>
           </div>
           <div class="hero-road"><div class="mini-car c1">🏎️</div><div class="mini-car c2">🚓</div></div>
         </div>
